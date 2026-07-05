@@ -1,9 +1,11 @@
 package com.bige0.shadowsocksr
 
+import android.Manifest
 import android.annotation.*
 import android.app.*
 import android.app.backup.*
 import android.content.*
+import android.content.pm.PackageManager
 import android.content.res.*
 import android.net.*
 import android.os.*
@@ -11,6 +13,7 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.app.*
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.*
 import androidx.core.content.pm.*
 import com.bige0.shadowsocksr.aidl.*
@@ -32,6 +35,7 @@ class Shadowsocks : AppCompatActivity()
 	{
 		private const val TAG = "Shadowsocks"
 		private const val REQUEST_CONNECT = 1
+		private const val REQUEST_NOTIFICATION = 2
 	}
 
 	private val callback by lazy {
@@ -213,6 +217,20 @@ class Shadowsocks : AppCompatActivity()
 
 	private fun prepareStartService()
 	{
+		// Android 13 (API 33) 及以上需要通知运行时权限,否则 VPN 前台服务通知无法显示
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+			ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+		{
+			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_NOTIFICATION)
+		}
+		else
+		{
+			startVpn()
+		}
+	}
+
+	private fun startVpn()
+	{
 		val intent = VpnService.prepare(mServiceBoundContext)
 		if (intent != null)
 		{
@@ -221,6 +239,16 @@ class Shadowsocks : AppCompatActivity()
 		else
 		{
 			handler.post { onActivityResult(REQUEST_CONNECT, Activity.RESULT_OK, null) }
+		}
+	}
+
+	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
+	{
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+		if (requestCode == REQUEST_NOTIFICATION)
+		{
+			// 无论用户是否授予通知权限,都继续启动 VPN 连接(权限被拒仅影响通知显示,不影响 VPN 本身)
+			startVpn()
 		}
 	}
 
