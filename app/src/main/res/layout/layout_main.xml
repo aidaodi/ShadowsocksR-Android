@@ -189,4 +189,62 @@
             app:srcCompat="@drawable/ic_start_idle"
             tools:ignore="VectorDrawableCompat" />
     </com.github.jorgecastilloprz.FABProgressCircle>
+
+    <!-- 首页添加配置快捷菜单,无需跳转配置页即可选择添加方式 -->
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/home_add_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="8dp"
+        app:fab_colorRipple="@android:color/white"
+        app:menu_colorNormal="@color/material_accent_500"
+        app:menu_colorPressed="@color/material_accent_700"
+        app:menu_icon="@drawable/ic_content_create">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/home_fab_manual_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/material_accent_500"
+            app:fab_colorPressed="@color/material_accent_700"
+            app:fab_colorRipple="@android:color/white"
+            app:fab_label="@string/add_profile_methods_manual_settings"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/home_fab_qrcode_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/material_accent_500"
+            app:fab_colorPressed="@color/material_accent_700"
+            app:fab_colorRipple="@android:color/white"
+            app:fab_label="@string/add_profile_methods_scan_qr_code"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/home_fab_ssr_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/material_accent_500"
+            app:fab_colorPressed="@color/material_accent_700"
+            app:fab_colorRipple="@android:color/white"
+            app:fab_label="@string/add_profile_methods_ssr_sub"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/home_fab_import_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/material_accent_500"
+            app:fab_colorPressed="@color/material_accent_700"
+            app:fab_colorRipple="@android:color/white"
+            app:fab_label="@string/action_import"
+            app:fab_size="mini" />
+    </com.github.clans.fab.FloatingActionMenu>
 </RelativeLayout>

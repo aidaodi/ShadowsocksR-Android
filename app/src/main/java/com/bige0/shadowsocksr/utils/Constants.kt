@@ -79,6 +79,10 @@ object Constants
 		const val QUICK_SWITCH = "com.bige0.shadowsocksr.QUICK_SWITCH"
 		const val SCAN = "com.bige0.shadowsocksr.intent.action.SCAN"
 		const val SORT = "com.bige0.shadowsocksr.intent.action.SORT"
+		const val MANUAL_ADD = "com.bige0.shadowsocksr.intent.action.MANUAL_ADD"
+		const val SUB_ADD = "com.bige0.shadowsocksr.intent.action.SUB_ADD"
+		const val IMPORT_ADD = "com.bige0.shadowsocksr.intent.action.IMPORT_ADD"
+		const val NFC_ADD = "com.bige0.shadowsocksr.intent.action.NFC_ADD"
 	}
 
 	object Route

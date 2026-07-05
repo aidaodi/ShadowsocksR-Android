@@ -3,6 +3,7 @@ package com.bige0.shadowsocksr
 import android.app.*
 import android.app.PendingIntent.*
 import android.content.*
+import android.content.pm.ServiceInfo
 import android.os.*
 import androidx.core.app.*
 import androidx.core.content.*
@@ -118,7 +119,7 @@ class ShadowsocksNotification constructor(private val service: Service, private 
 			lockReceiver = null
 		}
 		unregisterCallback()
-		service.stopForeground(true)
+		service.stopForeground(Service.STOP_FOREGROUND_REMOVE)
 		nm.cancel(1)
 	}
 
@@ -138,7 +139,14 @@ class ShadowsocksNotification constructor(private val service: Service, private 
 
 	fun show()
 	{
-		service.startForeground(1, builder.build())
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+		{
+			service.startForeground(1, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+		}
+		else
+		{
+			service.startForeground(1, builder.build())
+		}
 	}
 
 	private fun unregisterCallback()
@@ -167,7 +175,7 @@ class ShadowsocksNotification constructor(private val service: Service, private 
 		{
 			screenFilter.addAction(Intent.ACTION_USER_PRESENT)
 		}
-		service.registerReceiver(lockReceiver, screenFilter)
+		ContextCompat.registerReceiver(service, lockReceiver, screenFilter, ContextCompat.RECEIVER_NOT_EXPORTED)
 	}
 
 	private fun initWithUpdateAction()

@@ -485,7 +485,7 @@ class ShadowsocksSettings : PreferenceFragment(), SharedPreferences.OnSharedPref
 		ShadowsocksApplication.app.settings.unregisterOnSharedPreferenceChangeListener(this)
 	}
 
-	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String)
+	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?)
 	{
 	}
 

@@ -281,10 +281,10 @@ class AppManager : AppCompatActivity(), Toolbar.OnMenuItemClickListener
 				{
 					if (p.requestedPermissions != null)
 					{
-						val requestPermissions = listOf(*p.requestedPermissions)
+						val requestPermissions = listOf(*p.requestedPermissions!!)
 						if (requestPermissions.contains(Manifest.permission.INTERNET))
 						{
-							val app = ProxiedApp(pm.getApplicationLabel(p.applicationInfo).toString(), p.packageName, p.applicationInfo.loadIcon(pm))
+							val app = ProxiedApp(pm.getApplicationLabel(p.applicationInfo!!).toString(), p.packageName, p.applicationInfo!!.loadIcon(pm))
 							cachedApps.add(app)
 						}
 					}

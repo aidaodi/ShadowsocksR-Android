@@ -1,40 +1,15 @@
 package com.bige0.shadowsocksr
 
-import android.*
 import android.app.TaskStackBuilder
-import android.content.pm.*
-import android.os.*
-import android.text.*
-import androidx.appcompat.app.*
-import androidx.appcompat.widget.*
-import androidx.core.app.*
-import androidx.core.content.*
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.bige0.shadowsocksr.utils.*
-import com.google.zxing.*
-import me.dm7.barcodescanner.zxing.*
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanIntentResult
+import com.journeyapps.barcodescanner.ScanOptions
 
-class ScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler
+class ScannerActivity : AppCompatActivity()
 {
-	private lateinit var scannerView: ZXingScannerView
-
-	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray)
-	{
-		if (requestCode == MY_PERMISSIONS_REQUEST_CAMERA)
-		{
-			// If request is cancelled, the result arrays are empty.
-			if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-			{
-				scannerView.setResultHandler(this)
-				scannerView.startCamera()
-			}
-			else
-			{
-				ToastUtils.showShort(R.string.add_profile_scanner_permission_required)
-				finish()
-			}
-		}
-	}
-
 	private fun navigateUp()
 	{
 		val intent = parentActivityIntent
@@ -50,52 +25,33 @@ class ScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler
 		}
 	}
 
-	override fun onCreate(savedInstanceState: Bundle?)
-	{
-		super.onCreate(savedInstanceState)
-		setContentView(R.layout.layout_scanner)
-		val toolbar = findViewById<Toolbar>(R.id.toolbar)
-		toolbar.title = title
-		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
-		toolbar.setNavigationOnClickListener { navigateUp() }
-
-		scannerView = findViewById(R.id.scanner)
-
-		if (Build.VERSION.SDK_INT >= 25)
+	private val barcodeLauncher = registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
+		if (result.contents == null)
 		{
-			getSystemService<ShortcutManager>()!!.reportShortcutUsed("scan")
-		}
-	}
-
-	override fun onResume()
-	{
-		super.onResume()
-		val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-		if (permissionCheck == PackageManager.PERMISSION_GRANTED)
-		{
-			// Register ourselves as a handler for scan results.
-			scannerView.setResultHandler(this)
-			scannerView.setAutoFocus(true)
-			// Start camera on resume
-			scannerView.startCamera()
+			// 用户取消扫码
+			navigateUp()
 		}
 		else
 		{
-			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), MY_PERMISSIONS_REQUEST_CAMERA)
+			handleScanResult(result.contents)
 		}
 	}
 
-	override fun onPause()
+	override fun onCreate(savedInstanceState: Bundle?)
 	{
-		super.onPause()
-		// Stop camera on pause
-		scannerView.stopCamera()
+		super.onCreate(savedInstanceState)
+		// 直接启动 journeyapps 内置扫码界面(现代 UI,自动处理相机权限)
+		val options = ScanOptions()
+		options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+		options.setPrompt(getString(R.string.add_profile_methods_scan_qr_code))
+		options.setBeepEnabled(true)
+		options.setOrientationLocked(false)
+		barcodeLauncher.launch(options)
 	}
 
-	override fun handleResult(rawResult: Result)
+	private fun handleScanResult(uri: String)
 	{
-		val uri = rawResult.text
-		if (!TextUtils.isEmpty(uri))
+		if (uri.isNotEmpty())
 		{
 			val all = Parser.findAllSs(uri)
 			if (all.isNotEmpty())
@@ -116,10 +72,5 @@ class ScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandler
 			}
 		}
 		navigateUp()
-	}
-
-	companion object
-	{
-		private const val MY_PERMISSIONS_REQUEST_CAMERA = 1
 	}
 }

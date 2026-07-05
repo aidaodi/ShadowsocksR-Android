@@ -16,6 +16,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.*
 import androidx.core.content.pm.*
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.bige0.shadowsocksr.aidl.*
 import com.bige0.shadowsocksr.database.*
 import com.bige0.shadowsocksr.job.*
@@ -256,6 +258,19 @@ class Shadowsocks : AppCompatActivity()
 	{
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.layout_main)
+
+		// 适配 Android 15 (API 35) edge-to-edge:为 Toolbar 补上状态栏高度的顶部 padding,避免与系统状态栏重叠
+		val toolbar = findViewById<Toolbar>(R.id.toolbar)
+		val actionBarHeight = toolbar.resources.getDimensionPixelSize(androidx.appcompat.R.dimen.abc_action_bar_default_height_material)
+		ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
+			val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+			v.setPadding(v.paddingLeft, statusBarHeight, v.paddingRight, v.paddingBottom)
+			// 同步增加 minHeight,使 Toolbar 整体加高状态栏高度,内容垂直居中不再贴着下边缘
+			v.minimumHeight = statusBarHeight + actionBarHeight
+			insets
+		}
+		ViewCompat.requestApplyInsets(toolbar)
+
 		// Initialize Toolbar
 		initToolbar()
 
@@ -295,6 +310,9 @@ class Shadowsocks : AppCompatActivity()
 
 		updateTraffic(0, 0, 0, 0)
 
+		// 初始化首页添加配置快捷菜单
+		initAddMenu()
+
 		SSRSubUpdateJob.schedule()
 
 		updateDynamicShortcuts()
@@ -321,7 +339,7 @@ class Shadowsocks : AppCompatActivity()
 			title.gravity = 0x10
 			title.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
 			title.setOnClickListener { startActivity(Intent(this@Shadowsocks, ProfileManagerActivity::class.java)) }
-			val typedArray = obtainStyledAttributes(intArrayOf(R.attr.selectableItemBackgroundBorderless))
+			val typedArray = obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackgroundBorderless))
 			title.setBackgroundResource(typedArray.getResourceId(0, 0))
 			typedArray.recycle()
 			val tf = Typefaces[this, "fonts/Iceland.ttf"]
@@ -336,6 +354,45 @@ class Shadowsocks : AppCompatActivity()
 			e.printStackTrace()
 		}
 
+	}
+
+	/**
+	 * 初始化首页添加配置快捷菜单,点击各子项直接跳转到配置页并执行对应添加操作
+	 */
+	@SuppressLint("RestrictedApi")
+	private fun initAddMenu()
+	{
+		val menu = findViewById<com.github.clans.fab.FloatingActionMenu>(R.id.home_add_menu)
+		menu.setClosedOnTouchOutside(true)
+		val dm = androidx.appcompat.widget.AppCompatDrawableManager.get()
+
+		val manualAddFAB = findViewById<com.github.clans.fab.FloatingActionButton>(R.id.home_fab_manual_add)
+		manualAddFAB.setImageDrawable(dm.getDrawable(this, R.drawable.ic_content_create))
+		manualAddFAB.setOnClickListener {
+			menu.toggle(true)
+			startActivity(Intent(this, ProfileManagerActivity::class.java).setAction(Constants.Action.MANUAL_ADD))
+		}
+
+		val qrCodeAddFAB = findViewById<com.github.clans.fab.FloatingActionButton>(R.id.home_fab_qrcode_add)
+		qrCodeAddFAB.setImageDrawable(dm.getDrawable(this, R.drawable.ic_image_camera_alt))
+		qrCodeAddFAB.setOnClickListener {
+			menu.toggle(true)
+			startActivity(Intent(this, ProfileManagerActivity::class.java).setAction(Constants.Action.SCAN))
+		}
+
+		val ssrSubAddFAB = findViewById<com.github.clans.fab.FloatingActionButton>(R.id.home_fab_ssr_sub)
+		ssrSubAddFAB.setImageDrawable(dm.getDrawable(this, R.drawable.ic_rss))
+		ssrSubAddFAB.setOnClickListener {
+			menu.toggle(true)
+			startActivity(Intent(this, ProfileManagerActivity::class.java).setAction(Constants.Action.SUB_ADD))
+		}
+
+		val importAddFAB = findViewById<com.github.clans.fab.FloatingActionButton>(R.id.home_fab_import_add)
+		importAddFAB.setImageDrawable(dm.getDrawable(this, R.drawable.ic_content_paste))
+		importAddFAB.setOnClickListener {
+			menu.toggle(true)
+			startActivity(Intent(this, ProfileManagerActivity::class.java).setAction(Constants.Action.IMPORT_ADD))
+		}
 	}
 
 	/**

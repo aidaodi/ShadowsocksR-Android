@@ -43,7 +43,7 @@ object Parser
 						{
 							return@forEach
 						}
-						profile.method = ss.groupValues[2].toLowerCase(Locale.ENGLISH)
+						profile.method = ss.groupValues[2].lowercase(Locale.ENGLISH)
 						if (ss.groups[3] != null)
 						{
 							profile.protocol = "verify_sha1"
@@ -93,10 +93,10 @@ object Parser
 						{
 							return@forEach
 						}
-						profile.host = ss.groupValues[2].toLowerCase(Locale.ENGLISH)
-						profile.protocol = ss.groupValues[4].toLowerCase(Locale.ENGLISH)
-						profile.method = ss.groupValues[5].toLowerCase(Locale.ENGLISH)
-						profile.obfs = ss.groupValues[6].toLowerCase(Locale.ENGLISH)
+						profile.host = ss.groupValues[2].lowercase(Locale.ENGLISH)
+						profile.protocol = ss.groupValues[4].lowercase(Locale.ENGLISH)
+						profile.method = ss.groupValues[5].lowercase(Locale.ENGLISH)
+						profile.obfs = ss.groupValues[6].lowercase(Locale.ENGLISH)
 						profile.password = Base64.decodeUrlSafe(ss.groupValues[7])
 
 						if (profile.obfs == "tls1.2_ticket_fastauth")

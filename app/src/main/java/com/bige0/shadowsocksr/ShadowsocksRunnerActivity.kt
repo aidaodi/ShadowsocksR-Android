@@ -4,6 +4,7 @@ import android.app.*
 import android.content.*
 import android.net.*
 import android.os.*
+import androidx.core.content.ContextCompat
 import com.bige0.shadowsocksr.utils.*
 
 class ShadowsocksRunnerActivity : Activity()
@@ -67,7 +68,7 @@ class ShadowsocksRunnerActivity : Activity()
 					}
 				}
 			}
-			registerReceiver(receiver, filter)
+			ContextCompat.registerReceiver(this, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
 		}
 		else
 		{

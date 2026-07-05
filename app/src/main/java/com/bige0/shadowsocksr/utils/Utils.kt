@@ -120,7 +120,7 @@ object Utils
 			{
 				// New signature
 				val sig = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-					.signingInfo
+					.signingInfo!!
 				signatureList = if (sig.hasMultipleSigners())
 				{
 					// Send all with apkContentsSigners
@@ -145,7 +145,7 @@ object Utils
 				@Suppress("DEPRECATION")
 				@SuppressLint("PackageManagerGetSignatures")
 				val sig = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
-					.signatures
+					.signatures!!
 				signatureList = sig.map {
 					val digest = MessageDigest.getInstance("SHA")
 					digest.update(it.toByteArray())

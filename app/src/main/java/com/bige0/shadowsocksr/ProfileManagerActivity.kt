@@ -119,11 +119,22 @@ class ProfileManagerActivity : AppCompatActivity(), View.OnClickListener, Toolba
 		ssrSubAdapter = SSRSubAdapter()
 
 		clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+		updateNfcState()
 
 		when (intent.action)
 		{
 			Constants.Action.SCAN -> qrCodeScan()
 			Constants.Action.SORT -> isSort = true
+			Constants.Action.MANUAL_ADD ->
+			{
+				val profile = ShadowsocksApplication.app.profileManager.createProfile()
+				ShadowsocksApplication.app.profileManager.updateProfile(profile)
+				ShadowsocksApplication.app.switchProfile(profile.id)
+				finish()
+			}
+			Constants.Action.SUB_ADD -> ssrSubDialog()
+			Constants.Action.IMPORT_ADD -> clipboardImportAdd()
+			Constants.Action.NFC_ADD -> nfcAdd()
 		}
 
 		setContentView(R.layout.layout_profiles)
@@ -600,12 +611,40 @@ class ProfileManagerActivity : AppCompatActivity(), View.OnClickListener, Toolba
 			isNfcAvailable = true
 			if (nfcAdapter!!.isEnabled)
 			{
-				if (nfcAdapter!!.isNdefPushEnabled)
+				if (isNdefPushEnabledReflect())
 				{
 					isNfcBeamEnabled = true
-					nfcAdapter!!.setNdefPushMessageCallback(null, this@ProfileManagerActivity)
+					setNdefPushMessageCallbackReflect(null)
 				}
 			}
+		}
+	}
+
+	private fun isNdefPushEnabledReflect(): Boolean
+	{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return false
+		val adapter = nfcAdapter ?: return false
+		return try
+		{
+			NfcAdapter::class.java.getMethod("isNdefPushEnabled").invoke(adapter) as Boolean
+		}
+		catch (e: Exception)
+		{
+			false
+		}
+	}
+
+	private fun setNdefPushMessageCallbackReflect(callback: NfcAdapter.CreateNdefMessageCallback?)
+	{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
+		val adapter = nfcAdapter ?: return
+		try
+		{
+			val m = NfcAdapter::class.java.getMethod("setNdefPushMessageCallback", NfcAdapter.CreateNdefMessageCallback::class.java, Activity::class.java, Array<Activity>::class.java)
+			m.invoke(adapter, callback, this@ProfileManagerActivity, arrayOfNulls<Activity>(0))
+		}
+		catch (e: Exception)
+		{
 		}
 	}
 
@@ -880,7 +919,7 @@ class ProfileManagerActivity : AppCompatActivity(), View.OnClickListener, Toolba
 				val url = item.toString()
 				if (isNfcBeamEnabled)
 				{
-					nfcAdapter!!.setNdefPushMessageCallback(this@ProfileManagerActivity, this@ProfileManagerActivity)
+					setNdefPushMessageCallbackReflect(this@ProfileManagerActivity)
 					nfcShareItem = url.toByteArray(Charset.forName("UTF-8"))
 				}
 				val image = ImageView(this@ProfileManagerActivity)
@@ -907,7 +946,7 @@ class ProfileManagerActivity : AppCompatActivity(), View.OnClickListener, Toolba
 				else
 				{
 					dialog.setMessage(getString(R.string.share_message))
-					dialog.setOnDismissListener { nfcAdapter!!.setNdefPushMessageCallback(null, this@ProfileManagerActivity) }
+					dialog.setOnDismissListener { setNdefPushMessageCallbackReflect(null) }
 				}
 				dialog.show()
 			}

@@ -4,6 +4,7 @@ import android.app.*
 import android.content.*
 import android.net.*
 import android.os.*
+import androidx.core.content.ContextCompat
 import com.bige0.shadowsocksr.aidl.*
 import com.bige0.shadowsocksr.database.*
 import com.bige0.shadowsocksr.utils.*
@@ -141,27 +142,7 @@ abstract class BaseVpnService : VpnService()
 		get()
 		{
 			val defaultList = getString(R.string.black_list)
-			try
-			{
-				val container = ShadowsocksApplication.app.containerHolder.container
-				val update = container.getString("black_list_lite")
-
-				val list: String
-				list = if (update.isNullOrEmpty())
-				{
-					defaultList
-				}
-				else
-				{
-					update
-				}
-				return "exclude = $list;"
-			}
-			catch (e: Exception)
-			{
-				return "exclude = $defaultList;"
-			}
-
+			return "exclude = $defaultList;"
 		}
 
 	private fun checkProfile(profile: Profile): Boolean
@@ -180,65 +161,7 @@ abstract class BaseVpnService : VpnService()
 	open fun connect()
 	{
 		if (profile == null) return
-		if (Constants.DefaultHostName == profile!!.host)
-		{
-			val holder = ShadowsocksApplication.app.containerHolder
-			val container = holder.container
-			val url = container.getString("proxy_url")
-			val sig = Utils.getSignature(this)
-
-			val client = OkHttpClient.Builder()
-				.dns(object : Dns
-					 {
-						 override fun lookup(hostname: String): List<InetAddress>
-						 {
-							 val ip = Utils.resolve(hostname, false)
-							 return if (ip != null)
-							 {
-								 listOf(InetAddress.getByName(ip))
-							 }
-							 else
-							 {
-								 Dns.SYSTEM.lookup(hostname)
-							 }
-						 }
-					 })
-				.connectTimeout(10, TimeUnit.SECONDS)
-				.writeTimeout(10, TimeUnit.SECONDS)
-				.readTimeout(30, TimeUnit.SECONDS)
-				.build()
-
-			val requestBody = FormBody.Builder()
-				.add("sig", sig ?: "")
-				.build()
-
-			val request = Request.Builder()
-				.url(url)
-				.post(requestBody)
-				.build()
-
-			try
-			{
-				val response = client.newCall(request)
-					.execute()
-				val list = response.body!!.string()
-
-				val proxies = list.split("|")
-				proxies.shuffled()
-				val proxy = proxies[0].split(":")
-				profile!!.host = proxy[0].trim()
-				profile!!.remotePort = Integer.parseInt(proxy[1].trim())
-				profile!!.password = proxy[2].trim()
-				profile!!.method = proxy[3].trim()
-			}
-			catch (e: Exception)
-			{
-				VayLog.e(TAG, "connect", e)
-				ShadowsocksApplication.app.track(e)
-				stopRunner(true, e.message)
-			}
-
-		}
+		// 原 GTM 自动代理功能(当 host 为 DefaultHostName 时从 GTM 获取 proxy_url)已随 Tag Manager 移除
 	}
 
 	open fun startRunner(profile: Profile)
@@ -256,7 +179,7 @@ abstract class BaseVpnService : VpnService()
 			val filter = IntentFilter()
 			filter.addAction(Intent.ACTION_SHUTDOWN)
 			filter.addAction(Constants.Action.CLOSE)
-			registerReceiver(closeReceiver, filter)
+			ContextCompat.registerReceiver(this, closeReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
 			closeReceiverRegistered = true
 		}
 
@@ -375,7 +298,6 @@ abstract class BaseVpnService : VpnService()
 	override fun onCreate()
 	{
 		super.onCreate()
-		ShadowsocksApplication.app.refreshContainerHolder()
 		ShadowsocksApplication.app.updateAssets()
 	}
 

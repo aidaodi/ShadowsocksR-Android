@@ -2,36 +2,20 @@
 
 buildscript {
     ext {
-        javaVersion = JavaVersion.VERSION_1_8
-        kotlinVersion = '1.7.10'
+        javaVersion = JavaVersion.toVersion('21')
+        kotlinVersion = '2.3.21'
         minSdkVersion = 21
-        sdkVersion = 33
-        compileSdkVersion = 33
-        versionCode = 6
-        versionName = '3.8.3'
-    }
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        sdkVersion = 35
+        compileSdkVersion = 35
+        versionCode = 7
+        versionName = '3.8.4'
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url 'https://jitpack.io' }
-    }
+plugins {
+    id 'com.android.application' version '9.2.1' apply false
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }

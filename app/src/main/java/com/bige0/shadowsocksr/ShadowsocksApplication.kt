@@ -11,9 +11,6 @@ import com.bige0.shadowsocksr.database.*
 import com.bige0.shadowsocksr.job.*
 import com.bige0.shadowsocksr.utils.*
 import com.evernote.android.job.*
-import com.google.android.gms.analytics.*
-import com.google.android.gms.common.api.*
-import com.google.android.gms.tagmanager.*
 import com.j256.ormlite.logger.*
 import java.io.*
 import java.util.*
@@ -46,18 +43,14 @@ class ShadowsocksApplication : Application()
 		}
 	}
 
-	lateinit var containerHolder: ContainerHolder
 	lateinit var settings: SharedPreferences
 	lateinit var editor: SharedPreferences.Editor
 	lateinit var profileManager: ProfileManager
 	lateinit var ssrSubManager: SSRSubManager
 	lateinit var mThreadPool: ScheduledExecutorService
-	private lateinit var tracker: Tracker
 
 	private fun initVariable()
 	{
-		tracker = GoogleAnalytics.getInstance(this)
-			.newTracker(R.xml.tracker)
 		settings = PreferenceManager.getDefaultSharedPreferences(this)
 		editor = settings.edit()
 
@@ -71,23 +64,13 @@ class ShadowsocksApplication : Application()
 		})
 	}
 
+	// Google Analytics 已废弃(Google 2023 年下线 Universal Analytics),保留方法签名为空操作以兼容调用方
 	fun track(category: String, action: String)
 	{
-		val builders = HitBuilders.EventBuilder()
-			.setAction(action)
-			.setCategory(category)
-			.setLabel(BuildConfig.VERSION_NAME)
-			.build()
-		tracker.send(builders)
 	}
 
 	fun track(t: Throwable)
 	{
-		val builders = HitBuilders.ExceptionBuilder()
-			.setDescription(StandardExceptionParser(this, emptyList()).getDescription(Thread.currentThread().name, t))
-			.setFatal(false)
-			.build()
-		tracker.send(builders)
 	}
 
 	fun profileId(): Int
@@ -208,37 +191,13 @@ class ShadowsocksApplication : Application()
 		}
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 		checkChineseLocale(resources.configuration)
-		val tm = TagManager.getInstance(this)
-		val pending = tm.loadContainerPreferNonDefault("GTM-NT8WS8", R.raw.gtm_default_container)
-		val callback = ResultCallback<ContainerHolder> { holder ->
-			if (!holder.status.isSuccess)
-			{
-				return@ResultCallback
-			}
-			containerHolder = holder
-			val container = holder.container
-			container.registerFunctionCallMacroCallback(SIG_FUNC) { functionName, _ ->
-				if (SIG_FUNC == functionName)
-				{
-					Utils.getSignature(applicationContext) ?: ""
-				}
-				else
-				{
-					""
-				}
-			}
-		}
-		pending.setResultCallback(callback, 2, TimeUnit.SECONDS)
 		JobManager.create(this)
 			.addJobCreator(DonaldTrump())
 	}
 
 	fun refreshContainerHolder()
 	{
-		if (::containerHolder.isInitialized)
-		{
-			containerHolder.refresh()
-		}
+		// Google Tag Manager 已移除,保留为空操作以兼容调用方
 	}
 
 	private fun copyAssets(path: String)
