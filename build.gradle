@@ -4,9 +4,9 @@ buildscript {
     ext {
         javaVersion = JavaVersion.toVersion('21')
         kotlinVersion = '2.3.21'
-        minSdkVersion = 21
+        minSdkVersion = 23
         sdkVersion = 35
-        compileSdkVersion = 35
+        compileSdkVersion = 36
         versionCode = 7
         versionName = '3.8.4'
     }
