@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.bige0.shadowsocksr'
+    namespace 'com.aidaodi.shadowsocksr'
     compileSdk rootProject.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.bige0.shadowsocksr"
+        applicationId "com.aidaodi.shadowsocksr"
         minSdk rootProject.minSdkVersion
         targetSdk rootProject.sdkVersion
         versionCode rootProject.versionCode
@@ -44,6 +44,7 @@ android {
     }
     packaging {
         jniLibs {
+            useLegacyPackaging = true
             excludes += ['**/*.kotlin_*']
         }
         resources {

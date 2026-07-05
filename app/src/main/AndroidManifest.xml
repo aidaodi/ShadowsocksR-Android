@@ -6,7 +6,7 @@
     <uses-sdk tools:overrideLibrary="com.google.android.material" />
 
     <application
-        android:name="com.bige0.shadowsocksr.ShadowsocksApplication"
+        android:name="com.aidaodi.shadowsocksr.ShadowsocksApplication"
         android:allowBackup="true"
         android:banner="@drawable/ic_start_connected"
         android:hardwareAccelerated="true"
@@ -18,7 +18,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name="com.bige0.shadowsocksr.Shadowsocks"
+            android:name="com.aidaodi.shadowsocksr.Shadowsocks"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask">
@@ -37,51 +37,51 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name="com.bige0.shadowsocksr.ShadowsocksRunnerActivity"
+            android:name="com.aidaodi.shadowsocksr.ShadowsocksRunnerActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name="com.bige0.shadowsocksr.ProfileManagerActivity"
+            android:name="com.aidaodi.shadowsocksr.ProfileManagerActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/profiles"
             android:launchMode="singleTask"
-            android:parentActivityName="com.bige0.shadowsocksr.Shadowsocks">
+            android:parentActivityName="com.aidaodi.shadowsocksr.Shadowsocks">
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.ProfileManagerActivity" />
+                <action android:name="com.aidaodi.shadowsocksr.ProfileManagerActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.intent.action.SORT" />
+                <action android:name="com.aidaodi.shadowsocksr.intent.action.SORT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.intent.action.SCAN" />
+                <action android:name="com.aidaodi.shadowsocksr.intent.action.SCAN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.intent.action.MANUAL_ADD" />
+                <action android:name="com.aidaodi.shadowsocksr.intent.action.MANUAL_ADD" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.intent.action.SUB_ADD" />
+                <action android:name="com.aidaodi.shadowsocksr.intent.action.SUB_ADD" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.intent.action.IMPORT_ADD" />
+                <action android:name="com.aidaodi.shadowsocksr.intent.action.IMPORT_ADD" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.intent.action.NFC_ADD" />
+                <action android:name="com.aidaodi.shadowsocksr.intent.action.NFC_ADD" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -117,10 +117,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bige0.shadowsocksr.ScannerActivity"
+            android:name="com.aidaodi.shadowsocksr.ScannerActivity"
             android:excludeFromRecents="true"
             android:label="@string/add_profile_methods_scan_qr_code"
-            android:parentActivityName="com.bige0.shadowsocksr.ProfileManagerActivity" />
+            android:parentActivityName="com.aidaodi.shadowsocksr.ProfileManagerActivity" />
 
         <!-- 覆盖 journeyapps CaptureActivity 默认横屏,锁定为竖屏 -->
         <activity
@@ -128,13 +128,13 @@
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
         <activity
-            android:name="com.bige0.shadowsocksr.AppManager"
+            android:name="com.aidaodi.shadowsocksr.AppManager"
             android:excludeFromRecents="true"
             android:label="@string/proxied_apps"
             android:launchMode="singleTask"
-            android:parentActivityName="com.bige0.shadowsocksr.Shadowsocks" />
+            android:parentActivityName="com.aidaodi.shadowsocksr.Shadowsocks" />
         <activity
-            android:name="com.bige0.shadowsocksr.TaskerActivity"
+            android:name="com.aidaodi.shadowsocksr.TaskerActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher">
             <intent-filter>
@@ -142,7 +142,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bige0.shadowsocksr.ShadowsocksQuickSwitchActivity"
+            android:name="com.aidaodi.shadowsocksr.ShadowsocksQuickSwitchActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/quick_switch"
@@ -150,13 +150,13 @@
             android:taskAffinity=""
             android:theme="@style/PopupTheme.QuickSwitch">
             <intent-filter>
-                <action android:name="com.bige0.shadowsocksr.QUICK_SWITCH" />
+                <action android:name="com.aidaodi.shadowsocksr.QUICK_SWITCH" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bige0.shadowsocksr.QuickToggleShortcut"
+            android:name="com.aidaodi.shadowsocksr.QuickToggleShortcut"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/quick_toggle"
@@ -169,7 +169,7 @@
         </activity>
 
         <receiver
-            android:name="com.bige0.shadowsocksr.BootReceiver"
+            android:name="com.aidaodi.shadowsocksr.BootReceiver"
             android:directBootAware="true"
             android:enabled="false"
             android:exported="true">
@@ -179,7 +179,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.bige0.shadowsocksr.TaskerReceiver"
+            android:name="com.aidaodi.shadowsocksr.TaskerReceiver"
             android:exported="true"
             tools:ignore="ExportedReceiver">
             <intent-filter>
@@ -195,10 +195,10 @@
             android:process=":bg" />
 
         <service
-            android:name="com.bige0.shadowsocksr.ShadowsocksRunnerService"
+            android:name="com.aidaodi.shadowsocksr.ShadowsocksRunnerService"
             android:exported="false" />
         <service
-            android:name="com.bige0.shadowsocksr.ShadowsocksVpnService"
+            android:name="com.aidaodi.shadowsocksr.ShadowsocksVpnService"
             android:exported="false"
             android:foregroundServiceType="specialUse"
             android:label="@string/app_name"
@@ -212,7 +212,7 @@
                 android:value="vpn" />
         </service>
         <service
-            android:name="com.bige0.shadowsocksr.ShadowsocksTileService"
+            android:name="com.aidaodi.shadowsocksr.ShadowsocksTileService"
             android:exported="true"
             android:icon="@drawable/ic_start_connected"
             android:label="@string/quick_toggle"

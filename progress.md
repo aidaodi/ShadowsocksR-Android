@@ -15,9 +15,19 @@
 | AGP (Android Gradle Plugin) | 7.4.2 | **9.2.1** |
 | Kotlin | 1.7.10(独立 plugin) | **2.3.21(AGP 9 内置,不再单独声明)** |
 | Java | 1.8 | **21** |
-| compileSdk / targetSdk | 33 | **35** |
-| minSdk | 21 | 21(保持) |
+| compileSdk / targetSdk | 33 | **35 / 36** |
+| minSdk | 21 | **23** (为了适配新版第三方库) |
 | versionCode / versionName | 6 / 3.8.3 | 7 / 3.8.4 |
+
+## 二、重大更改 (2026-07-05 新增)
+
+1. **包名替换**:
+   - 将包名、`applicationId` 和 `namespace` 从 `com.bige0.shadowsocksr` 全面替换为 `com.aidaodi.shadowsocksr`。
+2. **本地库提取修复**:
+   - 解决提升 `minSdk` 至 23 后导致的 `extractNativeLibs` 默认不提取二进制文件（如 `libtun2socks.so` 等）导致 `sendFd failed` 的问题。通过在 `app/build.gradle` 中设置 `jniLibs { useLegacyPackaging = true }` 解决。
+3. **VPN 连接崩溃修复 (`EBADF`)**:
+   - 修复了 `ShadowsocksVpnThread` 中因为 `LocalSocket` 局部变量被垃圾回收 (GC) 导致的文件描述符 (fd) 被异常关闭、进而在 `accept()` 时触发 `EBADF (Bad file descriptor)` 的崩溃问题。通过添加对 `localSocket` 的强引用并手动释放资源解决。
+
 
 ### 改动文件
 
